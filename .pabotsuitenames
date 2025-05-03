@@ -1,0 +1,6 @@
+datasources:737df8aad2a36a6120670e29bd0043ccaba0df0a
+commandlineoptions:97d170e1550eee4afc0af065b78cda302a97674c
+suitesfrom:no-suites-from-option
+file:604b81db96243b81aa6f222acc29d520b9d07a49
+--suite Tests.Api.Status Check
+--suite Tests.Smoke.Login

@@ -1,0 +1,52 @@
+name: Run Robot Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  robot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install robotframework robotframework-seleniumlibrary robotframework-requests robotframework-pabot
+        sudo apt update
+
+    - name: Install Google Chrome and Chromedriver
+      run: |
+        sudo apt update
+        sudo apt install -y wget unzip
+    
+        wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/135.0.7049.114/linux64/chrome-linux64.zip
+        unzip chrome-linux64.zip
+        sudo mv chrome-linux64 /opt/chrome
+    
+        wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/135.0.7049.114/linux64/chromedriver-linux64.zip
+        unzip chromedriver-linux64.zip
+        sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+        sudo chmod +x /usr/bin/chromedriver
+
+
+    - name: Run Robot Tests (Headless)
+      run: |
+        pabot --outputdir results tests/
+
+    - name: Upload Robot Test Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: robot-test-report
+        path: ${{ github.workspace }}/results/
